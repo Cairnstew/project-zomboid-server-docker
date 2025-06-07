@@ -41,6 +41,10 @@ RUN chmod 550 /server/scripts/entry.sh
 COPY --chown=${USER}:${USER} scripts/search_folder.sh /server/scripts/search_folder.sh
 RUN chmod 550 /server/scripts/search_folder.sh
 
+# Copy the entry point file
+COPY --chown=${USER}:${USER} scripts/debug_env.sh /server/scripts/debug_env.sh
+RUN chmod 550 /server/scripts/debug_env.sh
+
 # Create required folders to keep their permissions on mount
 RUN mkdir -p "${HOMEDIR}/Zomboid"
 
