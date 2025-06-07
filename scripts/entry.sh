@@ -26,63 +26,126 @@ if [ -n "${MEMORY}" ]; then
   ARGS="${ARGS} -Xmx${MEMORY} -Xms${MEMORY}"
 fi
 
-# Option to perform a Soft Reset
+if [ "${ZOMBOID_STEAM}" == "1" ] || [ "${ZOMBOID_STEAM,,}" == "true" ]; then
+  JVM_ARGS="${JVM_ARGS} -Dzomboid.steam=1"
+elif [ "${ZOMBOID_STEAM}" == "0" ] || [ "${ZOMBOID_STEAM,,}" == "false" ]; then
+  JVM_ARGS="${JVM_ARGS} -Dzomboid.steam=0"
+fi
+
+if [ -n "${DEPLOYMENT_USER_CACHEDIR}" ]; then
+  JVM_ARGS="${JVM_ARGS} -Ddeployment.user.cachedir=\"${DEPLOYMENT_USER_CACHEDIR}\""
+fi
+
 if [ "${SOFTRESET}" == "1" ] || [ "${SOFTRESET,,}" == "true" ]; then
-  ARGS="${ARGS} -Dsoftreset"
+  JVM_ARGS="${JVM_ARGS} -Dsoftreset"
+fi
+
+if [ "${DEBUG_JVM}" == "1" ] || [ "${DEBUG_JVM,,}" == "true" ]; then
+  JVM_ARGS="${JVM_ARGS} -Ddebug"
 fi
 
 # End of Java arguments
 ARGS="${ARGS} -- "
 
-# Runs a coop server instead of a dedicated server. Disables the default admin from being accessible.
-# - Default: Disabled
-if [ "${COOP}" == "1" ] || [ "${COOP,,}" == "true" ]; then
-  ARGS="${ARGS} -coop"
+# ------------ CLIENT --------------
+
+if [ "${SAFEMODE}" == "1" ] || [ "${SAFEMODE,,}" == "true" ]; then
+  ARGS="${ARGS} -safemode"
 fi
 
-# Disables Steam integration on server.
-# - Default: Enabled
-if [ "${NOSTEAM}" == "1" ] || [ "${NOSTEAM,,}" == "true" ]; then
-  ARGS="${ARGS} -nosteam"
+if [ "${NOSOUND}" == "1" ] || [ "${NOSOUND,,}" == "true" ]; then
+  ARGS="${ARGS} -nosound"
 fi
 
-# Sets the path for the game data cache dir.
-# - Default: ~/Zomboid
-# - Example: /server/Zomboid/data
-if [ -n "${CACHEDIR}" ]; then
-  ARGS="${ARGS} -cachedir=${CACHEDIR}"
+if [ "${AITEST}" == "1" ] || [ "${AITEST,,}" == "true" ]; then
+  ARGS="${ARGS} -aitest"
 fi
 
-# Option to control where mods are loaded from and the order. Any of the 3 keywords may be left out and may appear in any order.
-# - Default: workshop,steam,mods
-# - Example: mods,steam
-if [ -n "${MODFOLDERS}" ]; then
-  ARGS="${ARGS} -modfolders ${MODFOLDERS}"
+if [ "${NOVOIP}" == "1" ] || [ "${NOVOIP,,}" == "true" ]; then
+  ARGS="${ARGS} -novoip"
 fi
 
-# Launches the game in debug mode.
-# - Default: Disabled
 if [ "${DEBUG}" == "1" ] || [ "${DEBUG,,}" == "true" ]; then
   ARGS="${ARGS} -debug"
 fi
 
-# Option to set the admin username. Current admins will not be changed.
+if [ -n "${DEBUGLOG_CLIENT}" ]; then
+  ARGS="${ARGS} -debuglog=${DEBUGLOG_CLIENT}"
+fi
+
+if [ -n "${CONNECT}" ]; then
+  ARGS="${ARGS} +connect ${CONNECT}"
+fi
+
+if [ -n "${PASSWORD}" ]; then
+  ARGS="${ARGS} +password ${PASSWORD}"
+fi
+
+if [ "${DEBUGTRANSLATION}" == "1" ] || [ "${DEBUGTRANSLATION,,}" == "true" ]; then
+  ARGS="${ARGS} -debugtranslation"
+fi
+
+if [ -n "${MODFOLDERS}" ]; then
+  ARGS="${ARGS} -modfolders ${MODFOLDERS}"
+fi
+
+if [ "${IMGUI}" == "1" ] || [ "${IMGUI,,}" == "true" ]; then
+  ARGS="${ARGS} -imgui"
+fi
+
+if [ "${IMGUIDEBUGVIEWPORTS}" == "1" ] || [ "${IMGUIDEBUGVIEWPORTS,,}" == "true" ]; then
+  ARGS="${ARGS} -imguidebugviewports"
+fi
+
+# ------------ CLIENT --------------
+
+# ------------ SERVER --------------
+
+if [ "${COOP}" == "1" ] || [ "${COOP,,}" == "true" ]; then
+  ARGS="${ARGS} -coop"
+fi
+
+if [ -n "${DISABLELOG}" ]; then
+  ARGS="${ARGS} -disablelog=${DISABLELOG}"
+fi
+
+if [ -n "${DEBUGLOG}" ]; then
+  ARGS="${ARGS} -debuglog=${DEBUGLOG}"
+fi
+
 if [ -n "${ADMINUSERNAME}" ]; then
   ARGS="${ARGS} -adminusername ${ADMINUSERNAME}"
 fi
 
-# Option to bypasses the enter-a-password prompt when creating a server.
-# This option is mandatory the first startup or will be asked in console and startup will fail.
-# Once is launched and data is created, then can be removed without problem.
-# Is recommended to remove it, because the server logs the arguments in clear text, so Admin password will be sent to log in every startup.
 if [ -n "${ADMINPASSWORD}" ]; then
   ARGS="${ARGS} -adminpassword ${ADMINPASSWORD}"
 fi
 
-# Server password (Doesn't work)
-#if [ -n "${PASSWORD}" ]; then
-#  ARGS="${ARGS} -password ${PASSWORD}"
-#fi
+if [ -n "${IP}" ]; then
+  ARGS="${ARGS} -ip ${IP}"
+fi
+
+if [ "${GUI}" == "1" ] || [ "${GUI,,}" == "true" ]; then
+  ARGS="${ARGS} -gui"
+fi
+
+if [ -n "${STATISTIC}" ]; then
+  ARGS="${ARGS} -statistic ${STATISTIC}"
+fi
+
+if [ -n "${PORT}" ]; then
+  ARGS="${ARGS} -port ${PORT}"
+fi
+
+if [ -n "${UDPPORT}" ]; then
+  ARGS="${ARGS} -udpport ${UDPPORT}"
+fi
+
+if [ "${STEAMVAC}" == "1" ] || [ "${STEAMVAC,,}" == "true" ]; then
+  ARGS="${ARGS} -steamvac true"
+elif [ "${STEAMVAC,,}" == "false" ]; then
+  ARGS="${ARGS} -steamvac false"
+fi
 
 # You can choose a different servername by using this option when starting the server.
 if [ -n "${SERVERNAME}" ]; then
@@ -91,6 +154,9 @@ else
   # If not servername is set, use the default name in the next step
   SERVERNAME="servertest"
 fi
+
+# ------------ SERVER --------------
+
 
 # If preset is set, then the config file is generated when it doesn't exists or SERVERPRESETREPLACE is set to True.
 if [ -n "${SERVERPRESET}" ]; then
@@ -110,32 +176,6 @@ if [ -n "${SERVERPRESET}" ]; then
     # I have seen that the file is created in execution mode (755). Change the file mode for security reasons.
     chmod 644 "${HOMEDIR}/Zomboid/Server/${SERVERNAME}_SandboxVars.lua"
   fi
-fi
-
-# Option to handle multiple network cards. Example: 127.0.0.1
-if [ -n "${IP}" ]; then
-  ARGS="${ARGS} ${IP} -ip ${IP}"
-fi
-
-# Set the DefaultPort for the server. Example: 16261
-if [ -n "${PORT}" ]; then
-  ARGS="${ARGS} -port ${PORT}"
-fi
-
-# Option to enable/disable VAC on Steam servers. On the server command-line use -steamvac true/false. In the server's INI file, use STEAMVAC=true/false.
-if [ -n "${STEAMVAC}" ]; then
-  ARGS="${ARGS} -steamvac ${STEAMVAC,,}"
-fi
-
-# Steam servers require two additional ports to function (I'm guessing they are both UDP ports, but you may need TCP as well).
-# These are in addition to the DefaultPort= setting. These can be specified in two ways:
-#  - In the server's INI file as SteamPort1= and SteamPort2=.
-#  - Using STEAMPORT1 and STEAMPORT2 variables.
-if [ -n "${STEAMPORT1}" ]; then
-  ARGS="${ARGS} -steamport1 ${STEAMPORT1}"
-fi
-if [ -n "${STEAMPORT2}" ]; then
-  ARGS="${ARGS} -steamport2 ${STEAMPORT1}"
 fi
 
 if [ -n "${PASSWORD}" ]; then
