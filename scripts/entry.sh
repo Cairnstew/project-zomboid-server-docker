@@ -101,9 +101,10 @@ fi
 
 # ------------ SERVER --------------
 
-if [ "${COOP}" == "1" ] || [ "${COOP,,}" == "true" ]; then
-  ARGS="${ARGS} -coop"
-fi
+# Not Needed
+#if [ "${COOP}" == "1" ] || [ "${COOP,,}" == "true" ]; then
+#  ARGS="${ARGS} -coop"
+#fi
 
 if [ -n "${DISABLELOG}" ]; then
   ARGS="${ARGS} -disablelog=${DISABLELOG}"
@@ -121,9 +122,10 @@ if [ -n "${ADMINPASSWORD}" ]; then
   ARGS="${ARGS} -adminpassword ${ADMINPASSWORD}"
 fi
 
-if [ -n "${IP}" ]; then
-  ARGS="${ARGS} -ip ${IP}"
-fi
+# This is Not Working-- Some parsing error
+#if [ -n "${IP}" ]; then
+#  ARGS="${ARGS} -ip ${IP}"
+#fi
 
 if [ "${GUI}" == "1" ] || [ "${GUI,,}" == "true" ]; then
   ARGS="${ARGS} -gui"
