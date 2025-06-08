@@ -50,7 +50,5 @@ RUN mkdir -p "${HOMEDIR}/Zomboid"
 
 WORKDIR ${HOMEDIR}
 # Expose ports
-EXPOSE 16261-16262/udp \
-  27015/tcp
 
 ENTRYPOINT ["/server/scripts/entry.sh"]
