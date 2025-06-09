@@ -212,6 +212,27 @@ if [ -n "$DISABLE_ANTICHEAT" ]; then
   done
 fi
 
+# Disable all types
+if [ -n "${DISCORD_ENABLE}" ]; then
+  if [ "${DISCORD_ENABLE,,}" == "true" ]; then
+    sed -i "s/^DiscordEnable=.*/DiscordEnable=true/" "${HOMEDIR}/Zomboid/Server/${SERVERNAME}.ini"
+  else
+    sed -i "s/^DiscordEnable=.*/DiscordEnable=false/" "${HOMEDIR}/Zomboid/Server/${SERVERNAME}.ini"
+  fi
+fi
+
+if [ -n "${DISCORD_TOKEN}" ]; then
+  sed -i "s|^DiscordToken=.*|DiscordToken=${DISCORD_TOKEN}|" "${HOMEDIR}/Zomboid/Server/${SERVERNAME}.ini"
+fi
+
+if [ -n "${DISCORD_CHANNEL}" ]; then
+  sed -i "s|^DiscordChannel=.*|DiscordChannel=${DISCORD_CHANNEL}|" "${HOMEDIR}/Zomboid/Server/${SERVERNAME}.ini"
+fi
+
+if [ -n "${DISCORD_CHANNEL_ID}" ]; then
+  sed -i "s|^DiscordChannelID=.*|DiscordChannelID=${DISCORD_CHANNEL_ID}|" "${HOMEDIR}/Zomboid/Server/${SERVERNAME}.ini"
+fi
+
 
 # Fixes EOL in script file for good measure
 sed -i 's/\r$//' /server/scripts/search_folder.sh
