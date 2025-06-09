@@ -195,6 +195,24 @@ if [ -n "${WORKSHOP_IDS}" ]; then
 	
 fi
 
+# Disable all types
+if [ "${DISABLE_ANTICHEAT_ALL,,}" == "true" ]; then
+  for i in {1..24}; do
+    sed -i "s/^AntiCheatProtectionType${i}=.*/AntiCheatProtectionType${i}=false/" "${HOMEDIR}/Zomboid/Server/${SERVERNAME}.ini"
+    
+  done
+fi
+# Disable specific types
+if [ -n "$DISABLE_ANTICHEAT" ]; then
+  for i in $DISABLE_ANTICHEAT; do
+    if [[ "$i" =~ ^[0-9]+$ ]] && [ "$i" -ge 1 ] && [ "$i" -le 24 ]; then
+      sed -i "s/^AntiCheatProtectionType${i}=.*/AntiCheatProtectionType${i}=false/" "${HOMEDIR}/Zomboid/Server/${SERVERNAME}.ini"
+      
+    fi
+  done
+fi
+
+
 # Fixes EOL in script file for good measure
 sed -i 's/\r$//' /server/scripts/search_folder.sh
 # Check 'search_folder.sh' script for details
