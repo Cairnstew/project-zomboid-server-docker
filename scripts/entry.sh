@@ -22,16 +22,18 @@ fi
 #!/usr/bin/env bash
 
 # Load helper functions
-source /server/scripts/zomboid_args_functions.sh
+source /server/scripts/arg-utility.sh
 
 # Build args using functions from sourced file
 build_jvm_args
+echo "Built JVM ARGS: ${JVM_ARGS}"
 
 ARGS="${JVM_ARGS} --"
 
 build_client_args
 build_server_args
 handle_server_preset
+
 
 # Final debug output
 echo "[DEBUG] Final ARGS: ${ARGS}"
@@ -42,7 +44,7 @@ echo "[DEBUG] JVM_ARGS: ${JVM_ARGS}"
 
 # -------- INI ----------
 
-source /server/scripts/config_functions.sh
+source /server/scripts/ini-utility.sh
 
 # --- Core Settings ---
 set_config "PVP" "$PVP"

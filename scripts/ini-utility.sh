@@ -43,6 +43,12 @@ update_workshop_ids() {
 }
 
 apply_maps_from_workshop() {
+    if [ "$UPDATE_MAPS" != "True" ]; then
+        echo "DEBUG: UPDATE_MAPS is not set to True; skipping map application"
+        set_config "Maps" "$MAPS"
+        return
+    fi
+
     echo "DEBUG: Applying maps from workshop"
     fix_windows_eol
 
